@@ -1,0 +1,62 @@
+---
+title: "Exemplo - Aula"
+runtime: shiny
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    theme: lumen
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+htmltools::tagList(fontawesome::fa_html_dependency())
+
+```
+
+
+Grafico
+=========================================
+
+```{r}
+varSelectInput("varx",
+                 "selecione a variavel do eixo x",
+                 gapminder %>% select(lifeExp,pop,gdpPercap))
+
+  varSelectInput("vary",
+                 "selecione a variavel do eixo y",
+                 gapminder %>% select(lifeExp,pop,gdpPercap))
+
+  plotOutput("grafico1")
+```
+
+```{r context = "server"}
+output$grafico1 <- renderPlot({
+    gapminder %>% ggplot(aes(x = .data[[input$varx]],
+                             y = !!input$vary))+
+      geom_point()
+  })
+```
+Saudacao
+=====================================  
+
+Row
+-----------------------------------------------------------------------
+
+```{r echo=FALSE}
+textInput("name", "Qual seu nome?")
+
+textOutput("res")
+
+```
+
+```{r warning=FALSE, context="server"}
+
+output$res <- renderText({paste0("bem vinda,", input$name,"!")})
+```
+
+
